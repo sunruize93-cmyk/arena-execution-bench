@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, cite this repository and the exact release or commit."
+type: software
+title: "Arena Execution Bench"
+version: 0.1.0
+date-released: 2026-09-22
+authors:
+  - family-names: Sun
+    given-names: Ruize
+repository-code: "https://github.com/sunruize93-cmyk/arena-execution-bench"
+license: Apache-2.0
+abstract: "An offline synthetic benchmark for agent payment execution, asynchronous confirmation, and liquidity decisions."
