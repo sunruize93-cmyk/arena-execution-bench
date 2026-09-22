@@ -111,6 +111,13 @@ def test_entrypoint_from_outside_checkout(tmp_path):
     assert "risk-high-dev" in result.stdout
 
 
+def test_cli_invalid_scenario_reports_contract_error(tmp_path, capsys):
+    bad = tmp_path / "bad.json"
+    bad.write_text('{"id": "malformed"}')
+    assert main(["run", "--scenario", str(bad), "--out", str(tmp_path / "run")]) == 2
+    assert "schema validation failed" in capsys.readouterr().err
+
+
 def test_golden_traces():
     from aeb.policies import RulePolicy
     from aeb.runner import run_episode

@@ -5,6 +5,8 @@ import json
 import sys
 from pathlib import Path
 
+from jsonschema import ValidationError
+
 from aeb import __version__
 from aeb.agents.process import Limits, ProcessAgent
 from aeb.evaluation.compare import compare, markdown
@@ -116,7 +118,11 @@ def main(argv: list[str] | None = None) -> int:
             write_json(args.out, arena_export(read_jsonl(args.trace)))
             print(f"Synthetic public replay saved to {args.out}")
         return 0
-    except (ValueError, OSError, KeyError, TypeError) as exc:
+    except ValidationError as exc:
+        location = "/".join(map(str, exc.absolute_path)) or "root"
+        print(f"aeb: schema validation failed at {location} ({exc.validator})", file=sys.stderr)
+        return 2
+    except (ValueError, OSError, KeyError, TypeError, IndexError) as exc:
         print(f"aeb: {exc}", file=sys.stderr)
         return 2
 
