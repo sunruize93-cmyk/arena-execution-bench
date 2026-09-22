@@ -7,7 +7,7 @@
     "referencing": "0.37.0",
     "rpds-py": "2026.6.3"
   },
-  "engine_digest": "045c6b9908ec103fc0dff963ba4b5426ad810eece895c4a11bf4cac64440e08d",
+  "engine_digest": "a152a339e58c0f9ae9dd7af0bf66fe79651fc61d4850a4b2878d4c22ac74d7dc",
   "engine_version": "0.1.0",
   "model": null,
   "policy": "naive-retry",
@@ -32,7 +32,7 @@
     5
   ],
   "source": "synthetic",
-  "source_revision": "6bbbf49d4a48d984568f60dc2c7b90d99e385935",
+  "source_revision": "a2ce89652b3a31cffaad24ef00bd3d6bf7e06d0f",
   "status": "complete",
   "track": "diagnostic"
 }
