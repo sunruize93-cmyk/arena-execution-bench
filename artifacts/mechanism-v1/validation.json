@@ -1,0 +1,29 @@
+{
+  "artifact_sha256": {
+    "budget-aware-manifest.json": "366fe91982d5bdbc61df73acd353d8730bdd11c2729de13b60963bc9f3073919",
+    "budget-aware-summary.json": "704df810049a96c7d6042723d7ee76bc5a1d2629d1c2731e84f562e8c7cc8b53",
+    "cheapest-manifest.json": "09f9b3f9bd193ee656c44006e99c2f1b37525d99c92d37a3a63add7547e779a8",
+    "cheapest-summary.json": "c6018b569efe32692b423820883dd1556168d35ad89b57d44bedcd4c9caf3ec5",
+    "comparison.json": "680befcea31e24dadb5bc2e6f53d4abdd2909b98f94d8fb6bd6c9fb25fd503d2",
+    "expected-cost-manifest.json": "cf70a5a641c6a167e3670ed0ac5ce7ffb92075efc683cc28a6c924484ea49b75",
+    "expected-cost-summary.json": "a5f49335a1e4e0ffed0b829e209ea6939edb200d72288092607393f69e3d62f0",
+    "retry-known-diagnostic-manifest.json": "4c0b4c0fe2e5c63c7f20c1c5727894eb711707c1b14b9aba6c25b4747fdf4732",
+    "retry-known-diagnostic-summary.json": "154b3ba8ec3531b212cbc8ad23f9529eed5173dcb1444ed2c9929e53b64df103",
+    "retry-known-guarded-manifest.json": "d9bd531536884a3c83679755a847f942dbd571e7e4fcfa958119c6e2013f67a3",
+    "retry-known-guarded-summary.json": "154b3ba8ec3531b212cbc8ad23f9529eed5173dcb1444ed2c9929e53b64df103",
+    "retry-unknown-diagnostic-manifest.json": "59f86aecf6b374a1f4cc2673584fbe28b0c224fad7433b1f70090f508ab3dc1d",
+    "retry-unknown-diagnostic-summary.json": "339122c5fc49401b01e54bca64519dde390feb61ad36944768b26f363cfdf487",
+    "retry-unknown-guarded-manifest.json": "238c8b32ece6ba6c3ffc431a0a6c6bc447f13c37f82604837ef92bc003389973",
+    "retry-unknown-guarded-summary.json": "663a5ce087c5396047467ce95934e1608123fdeaf01b71e43d40743349ecfde8"
+  },
+  "baseline_episodes": 144,
+  "diagnostic_episodes": 24,
+  "engine_source_revision": "6bbbf49d4a48d984568f60dc2c7b90d99e385935",
+  "local_fake_http_adapter": "passed",
+  "mock_model_transport": "passed",
+  "paid_model_calls": 0,
+  "sdist_contents": "passed",
+  "tests_passed": 63,
+  "verified_episodes": 168,
+  "wheel_install_outside_checkout": "passed"
+}
