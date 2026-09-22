@@ -79,3 +79,12 @@ def test_unaffordable_call_is_not_dispatched(late):
 def test_invalid_limits_rejected(limits):
     with pytest.raises(ValueError):
         Limits(**limits)
+
+
+def test_nonfinite_model_output_is_rejected_and_saved(late, tmp_path):
+    p = agent("print('{\"actions\": [NaN]}')", max_calls=1)
+    out = tmp_path / "invalid-json"
+    run_suite([late], [7], "process", out, agent=p)
+    assert p.last_record["adapter_status"] == "invalid_response"
+    result = json.loads((out / "episodes" / f"{late['id']}--seed-7" / "metrics.json").read_text())
+    assert result["invalid_action_requests"] == 1

@@ -12,6 +12,10 @@ from dataclasses import dataclass
 from aeb.util import canonical, digest
 
 
+def _reject_nonfinite_constant(value: str):
+    raise ValueError("Nonfinite constants are not valid JSON")
+
+
 class BudgetExhausted(RuntimeError):
     pass
 
@@ -114,7 +118,7 @@ class ProcessAgent:
                     if len(raw) > 1048576:
                         status = "response_too_large"
                     elif status == "ok":
-                        response = json.loads(raw)
+                        response = json.loads(raw, parse_constant=_reject_nonfinite_constant)
                         if not isinstance(response, dict):
                             status = "invalid_response"
                             response = {}
