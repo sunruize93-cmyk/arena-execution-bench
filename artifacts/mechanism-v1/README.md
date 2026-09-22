@@ -12,4 +12,4 @@ The committed JSON files preserve per-scenario utility distributions, tail outco
 
 Mechanism conclusions are narrow: the hand-calculated risk threshold changes provider preference; uncertainty can trigger repeated simulated payment under an explicitly unsafe policy; budget reservations can prevent a later valuable purchase. These are controlled construction checks. They say nothing about the ability of any LLM, a real provider's reliability, or production Arena performance.
 
-See [the experiment protocol](../../docs/EXPERIMENTS.md) for definitions and [the runtime outputs](../../README.md#compare-policies) for complete reproduction commands. Source commit and version information are in each copied manifest.
+See [the experiment protocol](../../docs/EXPERIMENTS.md) for definitions and [the runtime outputs](../../README.en.md#compare-policies) for complete reproduction commands. Source commit and version information are in each copied manifest.
