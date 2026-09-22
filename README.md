@@ -1,111 +1,92 @@
 # Arena Execution Bench
 
+**你的 Agent 会不会重复付款？先用模拟钱测一遍。**
+
 [![CI](https://github.com/sunruize93-cmyk/arena-execution-bench/actions/workflows/ci.yml/badge.svg)](https://github.com/sunruize93-cmyk/arena-execution-bench/actions/workflows/ci.yml)
-[中文说明](README.zh-CN.md) · [Semantics](docs/SEMANTICS.md) · [Reproduction](docs/EXPERIMENTS.md)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 
-**Can an agent make good purchasing decisions when payment is uncertain and reserved money cannot be reused?**
+**中文** · [English](README.en.md) · [快速上手](#快速上手) · [下载安装包](https://github.com/sunruize93-cmyk/arena-execution-bench/releases)
 
-AEB is an offline, deterministic execution market. Buyer agents choose among synthetic providers, reserve a budget, and handle delayed confirmations, failures, refunds, and deadlines. It runs on a CPU with Python 3.10+, without a database, wallet, chain node, GPU, or model key.
+一个本地运行的 **AI Agent 支付决策测试场**：模拟付款迟迟未确认、低价但容易失败的服务、被占用的预算，比较策略表现，并回放每一笔模拟账目。
 
-Version 0.1.0 implements the research environment and local mechanism checks. Results are synthetic and exploratory. No paid LLM pilot, real-provider evaluation, or production Arena integration is claimed.
+**内置示例不需要真钱、钱包、链节点、GPU 或模型 API key。**
 
-## Start in one minute
+## 为什么做？
+
+付款没有回音，Agent 是继续等，还是再付一次？便宜的服务经常失败，还值得选吗？账上有钱，但钱还被锁着，下一单怎么办？
+
+这些问题要测清楚，得先搭模拟环境、记账和回放工具。我把这套基础工作开源出来，希望帮做 Agent 的朋友**省下从零搭建的时间，专心测试自己的策略**。
+
+## 能帮你做什么？
+
+| 你想排查的问题 | 可以怎么测 |
+| --- | --- |
+| 没收到确认就重试，会不会付两遍？ | 对照已知／未知状态，观察重付请求是否被拦截，以及放行后的模拟损失 |
+| 低价但易失败，真的划算吗？ | 调整费用和失败概率，比较选择与净收益 |
+| 预算被占用，会不会错过下一单？ | 改变资金释放时间，检查可用余额和后续任务完成情况 |
+| 我改的策略到底有没有用？ | 使用相同场景和 seed 对照内置基线，重放轨迹、比较结果 |
+
+适合做**自动采购、付费工具调用、Agent 支付集成**的开发者，也适合需要可控决策实验的研究者。先跑内置规则，再按需[接入自己的模型](docs/AGENTS.md)。
+
+## 快速上手
+
+需要 Python 3.10+：
 
 ```bash
 git clone https://github.com/sunruize93-cmyk/arena-execution-bench.git
 cd arena-execution-bench
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -e '.[dev]'
+python -m pip install -e .
 
-aeb run --suite mechanism-v1 --policy expected-cost --seed 7 --out runs/first
-aeb replay --trace runs/first/episodes/late-unknown-dev--seed-7/events.jsonl
-aeb verify --episode runs/first/episodes/late-unknown-dev--seed-7
+# 无 key 演示：同一个错误重试策略，遇到不同状态和保护规则会怎样？
 python examples/no_key_demo.py
+
+# 跑完整机制套件，查看生成的 report.md
+aeb run --suite mechanism-v1 --policy expected-cost --seed 7 --out runs/first
 ```
 
-On Windows, activate with `.venv\Scripts\Activate.ps1`. The simulator is portable; the optional process adapter currently targets POSIX systems for process-group termination. PyPI publication is not required; install from this repository or a built wheel.
+Windows 使用 `.venv\Scripts\Activate.ps1` 激活环境。可选的子进程模型适配器目前支持 macOS/Linux。
 
-## The first experiment
+<details>
+<summary>展开看一个结果：把“未知”当成“失败”，会发生什么？</summary>
 
-Keep prices, jobs, actual confirmation times and random draws identical. Change the observed submission label from `submitted` to `submission_unknown`. A deliberately unsafe `naive-retry` policy issues a fresh authorization on unknown status.
+同一组价格、任务和随机条件下，一个故意写错的重试策略得到以下结果：
 
-| Observation | Track | Utility, seed 7 | Duplicate payments |
-| --- | --- | ---: | ---: |
-| Known submission | Guarded | 380 | 0 |
-| Unknown submission | Guarded | 380 | 0 |
-| Known submission | Diagnostic | 380 | 0 |
-| Unknown submission | Diagnostic | -1540 | 6 |
+| 情况 | 模拟重复付款次数 |
+| --- | ---: |
+| 提交状态已知，开启保护 | 0 |
+| 提交状态未知，开启保护 | 0 |
+| 提交状态未知，允许危险的新授权 | 6 |
 
-The unsafe rule keeps retrying while any unknown attempt remains, including after another attempt has delivered. This fixture verifies the consequence of that bug; it is not a measurement of LLM behavior. Both tracks always enforce nonnegative cash balances. Diagnostic relaxes only the new-authorization guard, inside the simulator.
+运行上面的无 key 示例即可复现（seed 7）。这是一个规则策略的诊断案例；每次模拟付款都受预算约束，服务价值只计算一次。
 
-Reproduce the table with `python examples/no_key_demo.py`. See [the experiment definitions](docs/EXPERIMENTS.md) and [checked development results](artifacts/mechanism-v1/README.md).
+</details>
 
-## Included
-
-| Component | v0.1 behavior |
-| --- | --- |
-| Engine | Integer double-entry cash accounts, stable event queue, virtual time, fixed drain horizon |
-| State | Separate hidden settlement and public evidence; unknown is distinct from failed |
-| Contracts | Validated observations/actions/scenarios, packaged schema with a SHA-256 lock |
-| Scenarios | Risk threshold, late confirmation, liquidity, mixed procurement; 8 conditions in each of train/dev/eval |
-| Policies | Cheapest, fastest, expected utility, Bayesian posterior mean, Thompson sampling, budget-aware threshold, unsafe retry fixture |
-| Exact reference | Finite-horizon DP for one public, immediate-outcome job; unsupported worlds are rejected |
-| Evaluation | Net utility, on-time delivery, duplicate/budget requests and effects, fees, lock duration, recovery, censoring, tails |
-| Reproduction | Saved observations/actions, public/evaluator traces, checkpoints, deterministic replay, episode-level bootstrap |
-| Model adapter | Optional JSON process interface, HTTPS Chat Completions example, explicit dispatch caps and failure accounting |
-| Arena handoff | Allowlisted file export marked synthetic, with production ranking eligibility disabled |
-
-The action vocabulary is `select`, `wait`, `query`, `reject`, and `retry`. Retry explicitly distinguishes `rebroadcast` from `new_authorization`. One batch is requested per decision epoch. Invalid input consumes an epoch and produces a rejection event.
-
-## Compare policies
+## 比较策略
 
 ```bash
 aeb run --policy cheapest --seeds 0,1,2,3,4,5 --out runs/cheap
 aeb run --policy expected-cost --seeds 0,1,2,3,4,5 --out runs/expected
 aeb compare --runs runs/cheap runs/expected --paired-by seed --out runs/comparison
-python scripts/reproduce.py --out runs/reproduction
 ```
 
-Comparisons pair independent episodes by scenario and seed, never individual jobs. They reject missing pairs, changed scenarios, incompatible engines and model runs stopped by dispatch caps. Explicit flags permit mechanism or track comparisons. The signed baseline utility gap is not a clairvoyant oracle regret.
+已经提供四类场景、规则／统计基线、一个适用范围明确的单任务精确 DP，以及轨迹重放、配对分析和公共 Arena 文件导出。模型接口支持调用数、token、费用核算和超时限制。
 
-## How it fits together
+当前 v0.1 的 **65 项测试通过，168 个本地模拟 episode 已完成并重放验证**。[查看结果与复现方法](artifacts/mechanism-v1/README.md)。
 
-```mermaid
-flowchart TD
-    S[Versioned scenario + seed] --> W[Discrete-event world]
-    W --> F[Public evidence projection]
-    F --> P[Rule policy or optional model]
-    P --> G[Action schema + authorization and budget guards]
-    G --> W
-    W --> L[Conserved integer ledger]
-    F --> T[Public trace + metrics + Arena file export]
-    W --> E[Private evaluator trace + checkpoint]
-```
+## 想继续用、改或贡献？
 
-Arena402 is an optional replay host. This repository does not contain Arena identity, wallets, Runtime, Connector, admin pages, or a second product frontend. Arena-owned APIs must ingest and project the public file before serving it to the website.
+- **了解实现：**[英文完整说明](README.en.md) · [执行与记账语义](docs/SEMANTICS.md)
+- **做实验：**[场景文件](src/aeb/data/scenarios) · [实验协议](docs/EXPERIMENTS.md) · [模型接口](docs/AGENTS.md)
+- **参与贡献：**[提交 Issue](https://github.com/sunruize93-cmyk/arena-execution-bench/issues) · [贡献指南](CONTRIBUTING.md)
 
-## Extend or inspect
+欢迎带着一个场景、一个 seed 和一个复现结果来提 Issue。补充场景、接入模型、改进文档都很有帮助。**如果这个工具对你有用，也欢迎点个 Star，让更多人找到它。**
 
-- [Economic and execution semantics](docs/SEMANTICS.md): fees, utility, public evidence, and censoring.
-- [Experiment protocol](docs/EXPERIMENTS.md): thresholds, causal pairs, splits, and statistical scope.
-- [Agent interface](docs/AGENTS.md): implement an adapter and control calls, tokens, time, and estimated spend.
-- [Arena export and contract status](docs/INTEGRATION.md): public handoff, provisional schema, upstream migration.
-- [Contributing](CONTRIBUTING.md) and [security boundaries](SECURITY.md).
+目前全部结果来自合成模拟，尚未运行付费 LLM 对比。Lab 契约使用明确标记的临时版本；Arena 接入提供文件导出，生产端仍需后端对接。[详细边界](docs/INTEGRATION.md)。
 
-```bash
-pytest -q
-ruff check src tests scripts examples
-python scripts/check_docs.py
-python -m build
-```
+## 开源协议
 
-The standalone wheel bundles all scenarios and the schema. To create a custom scenario, copy a JSON file from [the scenario directory](src/aeb/data/scenarios), change the declared parameters, and pass its path through `aeb run --scenario`. The owned generator is [generate_assets.py](scripts/generate_assets.py).
+Copyright © 2026 Ruize Sun。原创代码、文档、合成场景和测试轨迹采用 **[Apache-2.0](LICENSE)**，允许按协议商用、修改和分发。分发时需附带协议、保留相关声明并标注修改；具体条款见英文协议原文。
 
-## Research and protocol boundaries
-
-[Magentic Marketplace](https://github.com/microsoft/multi-agent-marketplace) already provides an environment for studying agentic markets and economic outcomes. AEB isolates payment-state uncertainty and liquidity with a smaller, controlled simulator. Whether these mechanisms justify a distinct research benchmark remains an empirical question; this release makes no first-of-its-kind claim.
-
-No released execution-lab schema was available for this implementation. AEB therefore labels its schema `aeb-provisional-0.1`; it does not claim x402 or upstream Lab conformance. Buyer-paid execution fees are a synthetic contract, not a statement about vanilla x402 payment paths. The only supported fee payer in v0.1 is the buyer, with submission-charged or success-charged fees.
-
-Code, original synthetic scenarios, and golden traces are [Apache-2.0](LICENSE). See [NOTICE](NOTICE) for provenance and [CITATION.cff](CITATION.cff) for software citation metadata.
+[中文使用说明](LICENSING.md) · [版权与来源声明](NOTICE) · [引用信息](CITATION.cff)
