@@ -1,5 +1,7 @@
 # Arena Execution Bench
 
+> **Development has moved.** Arena Execution Bench is now the [`bench/` module in x402 Execution Lab](https://github.com/sunruize93-cmyk/x402-execution-lab/tree/main/bench). Start with the [unified project README](https://github.com/sunruize93-cmyk/x402-execution-lab/blob/main/README.en.md) for installation, the combined demo, and current documentation. Existing releases and commit history remain here; the content below documents the earlier standalone version.
+
 [![CI](https://github.com/sunruize93-cmyk/arena-execution-bench/actions/workflows/ci.yml/badge.svg)](https://github.com/sunruize93-cmyk/arena-execution-bench/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 [中文首页](README.md) · [Quick start](#start-in-one-minute) · [Examples](examples/no_key_demo.py) · [Download](https://github.com/sunruize93-cmyk/arena-execution-bench/releases)
@@ -130,6 +132,6 @@ Version 0.1.0 is a synthetic simulator. No paid LLM pilot, real-provider evaluat
 
 ## License and contributions
 
-Copyright © 2026 Arena Execution Bench contributors. Original code, documentation, synthetic scenarios, and golden traces are licensed under [Apache-2.0](LICENSE). Commercial use, modification, and redistribution are permitted subject to its terms. See the [plain-language licensing guide](LICENSING.md) and [NOTICE](NOTICE).
+Original code, documentation, synthetic scenarios, and golden traces are licensed under [Apache-2.0](LICENSE). Commercial use, modification, and redistribution are permitted subject to its terms. See the [plain-language licensing guide](LICENSING.md) and [NOTICE](NOTICE).
 
 Found a useful case? [Open an issue](https://github.com/sunruize93-cmyk/arena-execution-bench/issues) with the scenario, seed, and what happened. New scenarios, adapters, and clearer documentation are welcome. If the project helps, a star helps others find it.

@@ -1,5 +1,7 @@
 # Arena Execution Bench
 
+> **项目已合并。** 后续开发已迁入 [x402 Execution Lab 的 `bench/` 模块](https://github.com/sunruize93-cmyk/x402-execution-lab/tree/main/bench)。安装、联合演示和最新文档请从[统一项目首页](https://github.com/sunruize93-cmyk/x402-execution-lab#readme)开始。本仓库保留已有发布版本与提交历史；下文为独立版本的历史说明。
+
 **你的 Agent 会不会重复付款？先用模拟钱测一遍。**
 
 [![CI](https://github.com/sunruize93-cmyk/arena-execution-bench/actions/workflows/ci.yml/badge.svg)](https://github.com/sunruize93-cmyk/arena-execution-bench/actions/workflows/ci.yml)
@@ -87,6 +89,6 @@ aeb compare --runs runs/cheap runs/expected --paired-by seed --out runs/comparis
 
 ## 开源协议
 
-Copyright © 2026 Arena Execution Bench contributors。原创代码、文档、合成场景和测试轨迹采用 **[Apache-2.0](LICENSE)**，允许按协议商用、修改和分发。分发时需附带协议、保留相关声明并标注修改；具体条款见英文协议原文。
+原创代码、文档、合成场景和测试轨迹采用 **[Apache-2.0](LICENSE)**，允许按协议商用、修改和分发。分发时需附带协议、保留相关声明并标注修改；具体条款见英文协议原文。
 
 [中文使用说明](LICENSING.md) · [版权与来源声明](NOTICE)
