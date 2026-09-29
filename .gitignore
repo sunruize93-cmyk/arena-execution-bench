@@ -11,3 +11,6 @@ runs/
 .env.*
 !.env.example
 .DS_Store
+
+# Publication drafts are maintained outside the public repository.
+SOCIAL_POSTS.md
